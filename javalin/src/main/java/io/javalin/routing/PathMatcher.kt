@@ -30,10 +30,18 @@ class PathMatcher {
     internal fun getAllEntriesOfType(handlerType: HandlerType) =
         handlerEntries[handlerType]!!
 
-    private fun match(entry: HandlerEntry, requestPath: String): Boolean = when (entry.path) {
-        "*" -> true
-        requestPath -> true
-        else -> entry.matches(requestPath)
+    private fun match(entry: HandlerEntry, requestPath: String): Boolean {
+        if (entry.path == "*") {
+            require(entry.matches(requestPath)) { "entry.path == * but entry.matches(\"${requestPath}\") returned false!" }
+        }
+        if (entry.path == requestPath) {
+            require(entry.matches(requestPath)) { "entry.path == requestPath but entry.matches(\"${requestPath}\") returned false!" }
+        }
+        return when (entry.path) {
+            "*" -> true
+            requestPath -> true
+            else -> entry.matches(requestPath)
+        }
     }
 
 }
